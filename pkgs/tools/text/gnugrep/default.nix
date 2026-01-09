@@ -38,9 +38,9 @@ stdenv.mkDerivation {
   # Some gnulib tests fail
   # - on Musl: https://github.com/NixOS/nixpkgs/pull/228714
   # - on x86_64-darwin: https://github.com/NixOS/nixpkgs/pull/228714#issuecomment-1576826330
-  # - when building on Darwin (cross-compilation): test-nl_langinfo-mt fails
+  # - on Darwin: test-nl_langinfo-mt fails
   postPatch =
-    if stdenv.hostPlatform.isMusl || stdenv.buildPlatform.isDarwin then
+    if stdenv.hostPlatform.isMusl || stdenv.buildPlatform.isDarwin || stdenv.hostPlatform.isDarwin then
       ''
         sed -i 's:gnulib-tests::g' Makefile.in
       ''
@@ -70,7 +70,7 @@ stdenv.mkDerivation {
   doCheck =
     !stdenv.hostPlatform.isCygwin
     && !stdenv.hostPlatform.isFreeBSD
-    && !(stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isx86_64)
+    && !stdenv.hostPlatform.isDarwin
     && !stdenv.buildPlatform.isRiscV64
     && !stdenv.hostPlatform.isAarch32;
 
